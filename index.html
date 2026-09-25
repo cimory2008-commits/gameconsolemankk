@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MANKKDEV Control Panel V1</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Manrope:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--gold1:#f7e08a;--gold2:#d4a72c;--gold3:#8a6414;--bg:#050505;--panel:#0e0d0b;--line:#3a2f14}
+body{font-family:Manrope,sans-serif;background:var(--bg);color:#e9e2cf}
+h1,h2,h3,.brand{font-family:'Cormorant Garamond',serif;letter-spacing:.02em}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;background:radial-gradient(900px 500px at 85% -10%,rgba(212,167,44,.13),transparent 60%),radial-gradient(600px 400px at -10% 110%,rgba(212,167,44,.07),transparent 60%)}
+.gold-text{background:linear-gradient(180deg,var(--gold1),var(--gold2) 55%,var(--gold3));-webkit-background-clip:text;background-clip:text;color:transparent}
+.panel{background:linear-gradient(160deg,#131109,var(--panel));border:1px solid var(--line);border-radius:14px;box-shadow:inset 0 1px 0 rgba(247,224,138,.08),0 10px 30px rgba(0,0,0,.6)}
+.btn-gold{background:linear-gradient(180deg,var(--gold1),var(--gold2) 60%,#b58618);color:#1a1200;font-weight:700;border-radius:10px;padding:.7rem 1.2rem;box-shadow:0 0 18px rgba(212,167,44,.35),inset 0 1px 0 rgba(255,255,255,.5);transition:filter .15s,box-shadow .15s}
+.btn-gold:hover{filter:brightness(1.08);box-shadow:0 0 28px rgba(212,167,44,.55)}
+.btn-gold:disabled{opacity:.5;cursor:wait}
+.btn-line{border:1px solid var(--gold3);color:var(--gold1);border-radius:10px;padding:.5rem .9rem;transition:background .15s}
+.btn-line:hover{background:rgba(212,167,44,.12)}
+.btn-danger{border:1px solid #6b1f1f;color:#ff8c8c;border-radius:10px;padding:.5rem .9rem}
+.btn-danger:hover{background:rgba(180,40,40,.15)}
+.input{width:100%;background:#080807;border:1px solid var(--line);border-radius:10px;padding:.7rem .9rem;color:#f3ecd8;outline:none;transition:border-color .15s,box-shadow .15s}
+.input:focus{border-color:var(--gold2);box-shadow:0 0 0 3px rgba(212,167,44,.18)}
+label{font-size:.85rem;color:#b9ad8c;display:block;margin-bottom:.35rem}
+.logo-frame{background:#f4efe2;border:1px solid var(--gold2);border-radius:14px;padding:6px;filter:drop-shadow(0 0 14px rgba(212,167,44,.45))}
+.nav{display:flex;gap:.7rem;align-items:center;width:100%;text-align:left;padding:.7rem .9rem;border-radius:10px;color:#b9ad8c;border-left:2px solid transparent}
+.nav:hover{background:rgba(212,167,44,.08);color:var(--gold1)}
+.nav.on{background:rgba(212,167,44,.14);color:var(--gold1);border-left-color:var(--gold2)}
+.switch{position:relative;width:54px;height:30px;border-radius:99px;background:#1c1a14;border:1px solid var(--line);transition:.2s;flex:none}
+.switch::after{content:"";position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:#6c6450;transition:.2s}
+.switch.on{background:rgba(212,167,44,.25);border-color:var(--gold2);box-shadow:0 0 14px rgba(212,167,44,.4)}
+.switch.on::after{left:27px;background:linear-gradient(180deg,var(--gold1),var(--gold2))}
+:focus-visible{outline:2px solid var(--gold1);outline-offset:2px}
+.hidden{display:none!important}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body class="min-h-screen">
+
+<!-- LOGIN -->
+<section id="login" class="min-h-screen flex items-center justify-center p-5 relative">
+  <form id="loginForm" class="panel w-full max-w-md p-8 space-y-5">
+    <div class="logo-frame mx-auto w-56"><img src="logo.png" alt="4MankkDev" class="w-full rounded-lg"></div>
+    <div class="text-center">
+      <h1 class="brand gold-text text-3xl font-bold">MANKKDEV Control Panel</h1>
+      <p class="text-sm text-[#8f8567] mt-1">Masuk untuk mengelola game Roblox Anda.</p>
+    </div>
+    <div><label for="lu">Username</label><input id="lu" class="input" autocomplete="username" required></div>
+    <div><label for="lp">Password</label><input id="lp" type="password" class="input" autocomplete="current-password" required></div>
+    <p id="loginErr" class="text-sm text-red-400 hidden"></p>
+    <button class="btn-gold w-full">Masuk</button>
+  </form>
+</section>
+
+<!-- APP -->
+<div id="app" class="hidden min-h-screen lg:flex">
+  <header class="lg:hidden flex items-center justify-between p-3 border-b border-[#3a2f14] sticky top-0 bg-black/90 backdrop-blur z-30">
+    <div class="logo-frame w-28"><img src="logo.png" alt="Logo" class="rounded"></div>
+    <button id="menuBtn" class="btn-line" aria-label="Buka menu">Menu</button>
+  </header>
+
+  <aside id="side" class="hidden lg:flex flex-col w-full lg:w-72 lg:min-h-screen lg:sticky lg:top-0 lg:h-screen p-5 gap-6 border-r border-[#3a2f14] bg-black/70 backdrop-blur z-20">
+    <div class="logo-frame hidden lg:block"><img src="logo.png" alt="4MankkDev" class="rounded-lg w-full"></div>
+    <div>
+      <p class="brand gold-text text-xl font-bold leading-tight">MANKKDEV<br>Control Panel V1</p>
+      <p id="who" class="text-xs text-[#8f8567] mt-2"></p>
+    </div>
+    <nav id="nav" class="flex flex-col gap-1"></nav>
+    <button id="logout" class="btn-line mt-auto">Keluar</button>
+  </aside>
+
+  <main class="flex-1 p-4 sm:p-8 max-w-6xl w-full mx-auto relative">
+    <div id="view"></div>
+  </main>
+</div>
+
+<!-- MODAL -->
+<div id="modal" class="hidden fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4">
+  <div class="panel max-w-md w-full p-6 space-y-4" role="dialog" aria-modal="true">
+    <h3 id="mTitle" class="brand gold-text text-2xl font-bold"></h3>
+    <p id="mText" class="text-[#cfc5a6]"></p>
+    <div class="flex gap-3 justify-end">
+      <button id="mNo" class="btn-line">Batal</button>
+      <button id="mYes" class="btn-gold">Ya, lanjutkan</button>
+    </div>
+  </div>
+</div>
+<div id="toast" class="fixed bottom-5 right-5 z-50 hidden panel px-4 py-3 text-sm max-w-xs"></div>
+
+<script>
+const $ = (s) => document.querySelector(s);
+let token = localStorage.getItem('mk_token'), me = null, games = [], current = null, info = null, tab = null;
+
+// ---------- helpers ----------
+async function api(path, method = 'GET', body) {
+  const r = await fetch('/api' + path, { method, headers: { 'Content-Type': 'application/json', ...(token && { Authorization: 'Bearer ' + token }) }, body: body && JSON.stringify(body) });
+  const d = await r.json().catch(() => ({}));
+  if (r.status === 401 && token) { logout(); throw new Error(d.error); }
+  if (!r.ok) throw new Error(d.error || 'Terjadi kesalahan.');
+  return d;
+}
+function toast(msg, bad) {
+  const t = $('#toast'); t.textContent = msg; t.style.borderColor = bad ? '#8a2b2b' : '#d4a72c';
+  t.classList.remove('hidden'); clearTimeout(t._t); t._t = setTimeout(() => t.classList.add('hidden'), 3500);
+}
+function confirmBox(title, text) {
+  return new Promise((res) => {
+    $('#mTitle').textContent = title; $('#mText').textContent = text; $('#modal').classList.remove('hidden');
+    const done = (v) => { $('#modal').classList.add('hidden'); res(v); };
+    $('#mYes').onclick = () => done(true); $('#mNo').onclick = () => done(false);
+  });
+}
+const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const fmtDate = (d) => new Date(d).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
+
+// ---------- auth ----------
+$('#loginForm').onsubmit = async (e) => {
+  e.preventDefault(); $('#loginErr').classList.add('hidden');
+  try {
+    const d = await api('/login', 'POST', { username: $('#lu').value.trim(), password: $('#lp').value });
+    token = d.token; localStorage.setItem('mk_token', token); await boot();
+  } catch (err) { $('#loginErr').textContent = err.message; $('#loginErr').classList.remove('hidden'); }
+};
+function logout() { localStorage.removeItem('mk_token'); token = null; me = null; $('#app').classList.add('hidden'); $('#login').classList.remove('hidden'); }
+$('#logout').onclick = logout;
+$('#menuBtn').onclick = () => $('#side').classList.toggle('hidden');
+
+async function boot() {
+  if (!token) return;
+  try { me = await api('/me'); } catch { return; }
+  $('#login').classList.add('hidden'); $('#app').classList.remove('hidden'); $('#app').classList.add('lg:flex');
+  $('#who').textContent = `${me.username} · ${me.role === 'admin' ? 'Super Admin' : 'Reseller'}` + (me.expiresAt ? ` · aktif s/d ${fmtDate(me.expiresAt)}` : '');
+  const items = me.role === 'admin' ? [['resellers', 'Kelola Reseller']] : [['dashboard', 'Dashboard Game'], ['games', 'Game Saya']];
+  $('#nav').innerHTML = items.map(([k, l]) => `<button class="nav" data-k="${k}">${l}</button>`).join('');
+  $('#nav').onclick = (e) => { const b = e.target.closest('.nav'); if (b) go(b.dataset.k); };
+  if (me.role === 'reseller') { await loadGames(); }
+  go(items[0][0]);
+}
+function go(k) {
+  tab = k; document.querySelectorAll('.nav').forEach((b) => b.classList.toggle('on', b.dataset.k === k));
+  if (window.innerWidth < 1024) $('#side').classList.add('hidden');
+  ({ resellers: viewResellers, dashboard: viewDashboard, games: viewGames })[k]();
+}
+const head = (t, s) => `<div class="mb-6"><h2 class="brand gold-text text-4xl font-bold">${t}</h2><p class="text-[#8f8567] mt-1">${s}</p></div>`;
+
+// ---------- SUPER ADMIN ----------
+async function viewResellers() {
+  const list = await api('/admin/resellers');
+  const active = list.filter((r) => r.active && !r.expired).length;
+  $('#view').innerHTML = head('Kelola Reseller', 'Buat akun baru, perpanjang masa sewa, atau nonaktifkan akun.') + `
+  <div class="grid sm:grid-cols-3 gap-4 mb-6">
+    <div class="panel p-5"><p class="text-sm text-[#8f8567]">Total reseller</p><p class="brand gold-text text-4xl font-bold">${list.length}</p></div>
+    <div class="panel p-5"><p class="text-sm text-[#8f8567]">Reseller aktif</p><p class="brand gold-text text-4xl font-bold">${active}</p></div>
+    <div class="panel p-5"><p class="text-sm text-[#8f8567]">Masa sewa habis</p><p class="brand gold-text text-4xl font-bold">${list.filter((r) => r.expired).length}</p></div>
+  </div>
+  <form id="newR" class="panel p-5 grid sm:grid-cols-4 gap-3 items-end mb-6">
+    <div><label>Username</label><input name="username" class="input" required></div>
+    <div><label>Password</label><input name="password" type="password" minlength="6" class="input" required></div>
+    <div><label>Masa sewa (hari)</label><input name="days" type="number" min="1" value="30" class="input"></div>
+    <button class="btn-gold">Buat reseller</button>
+  </form>
+  <div class="panel overflow-x-auto"><table class="w-full text-sm">
+    <thead class="text-left text-[#8f8567]"><tr><th class="p-4">Username</th><th>Status</th><th>Berakhir</th><th>Game</th><th class="p-4 text-right">Aksi</th></tr></thead>
+    <tbody>${list.map((r) => `<tr class="border-t border-[#2a2311]">
+      <td class="p-4 font-bold">${esc(r.username)}</td>
+      <td>${r.expired ? '<span class="text-red-400">Habis</span>' : r.active ? '<span class="text-[#f7e08a]">Aktif</span>' : '<span class="text-[#8f8567]">Nonaktif</span>'}</td>
+      <td>${fmtDate(r.expiresAt)}</td><td>${r.games}</td>
+      <td class="p-4 text-right whitespace-nowrap space-x-2">
+        <button class="btn-line" data-a="ext" data-id="${r.id}">+30 hari</button>
+        <button class="btn-line" data-a="tog" data-id="${r.id}" data-v="${r.active}">${r.active ? 'Nonaktifkan' : 'Aktifkan'}</button>
+        <button class="btn-danger" data-a="del" data-id="${r.id}" data-n="${esc(r.username)}">Hapus</button></td></tr>`).join('') || '<tr><td colspan="5" class="p-6 text-center text-[#8f8567]">Belum ada reseller. Buat akun pertama di atas.</td></tr>'}
+    </tbody></table></div>`;
+  $('#newR').onsubmit = async (e) => {
+    e.preventDefault(); const f = Object.fromEntries(new FormData(e.target));
+    try { await api('/admin/resellers', 'POST', f); toast('Reseller dibuat.'); viewResellers(); } catch (err) { toast(err.message, 1); }
+  };
+  $('#view').querySelector('tbody').onclick = async (e) => {
+    const b = e.target.closest('button'); if (!b) return; const id = b.dataset.id;
+    try {
+      if (b.dataset.a === 'ext') await api('/admin/resellers/' + id, 'PATCH', { extendDays: 30 });
+      if (b.dataset.a === 'tog') await api('/admin/resellers/' + id, 'PATCH', { active: b.dataset.v !== 'true' });
+      if (b.dataset.a === 'del') { if (!(await confirmBox('Hapus reseller?', `Akun "${b.dataset.n}" beserta semua data game-nya akan dihapus permanen.`))) return; await api('/admin/resellers/' + id, 'DELETE'); }
+      toast('Berhasil disimpan.'); viewResellers();
+    } catch (err) { toast(err.message, 1); }
+  };
+}
+
+// ---------- RESELLER: game saya ----------
+async function loadGames() { games = await api('/games'); if (!games.find((g) => g.id === current)) current = games[0]?.id || null; }
+function viewGames() {
+  $('#view').innerHTML = head('Game Saya', 'Simpan Universe ID dan API Key milik client Anda. Data hanya terlihat oleh akun ini.') + `
+  <form id="newG" class="panel p-5 grid sm:grid-cols-4 gap-3 items-end mb-6">
+    <div><label>Nama label</label><input name="label" class="input" placeholder="Game Client A"></div>
+    <div><label>Universe ID</label><input name="universeId" inputmode="numeric" class="input" required></div>
+    <div><label>Roblox API Key</label><input name="apiKey" type="password" class="input" autocomplete="off" required></div>
+    <button class="btn-gold">Simpan game</button>
+  </form>
+  <div class="grid md:grid-cols-2 gap-4">${games.map((g) => `<div class="panel p-5 flex items-center justify-between gap-3">
+    <div><p class="font-bold">${esc(g.label)}</p><p class="text-sm text-[#8f8567]">Universe ${esc(g.universeId)}</p></div>
+    <div class="flex gap-2"><button class="btn-line" data-a="use" data-id="${g.id}">Kelola</button><button class="btn-danger" data-a="del" data-id="${g.id}">Hapus</button></div></div>`).join('') || '<p class="text-[#8f8567]">Belum ada game. Tambahkan Universe ID dan API Key di atas.</p>'}</div>
+  <p class="text-xs text-[#8f8567] mt-6">API Key tidak pernah dikirim kembali ke browser. Buat key di Creator Hub dengan izin universe untuk game tersebut.</p>`;
+  $('#newG').onsubmit = async (e) => {
+    e.preventDefault();
+    try { const g = await api('/games', 'POST', Object.fromEntries(new FormData(e.target))); current = g.id; await loadGames(); toast('Game disimpan.'); viewGames(); } catch (err) { toast(err.message, 1); }
+  };
+  $('#view').querySelector('.grid.md\\:grid-cols-2').onclick = async (e) => {
+    const b = e.target.closest('button'); if (!b) return;
+    if (b.dataset.a === 'use') { current = b.dataset.id; go('dashboard'); }
+    if (b.dataset.a === 'del') { if (!(await confirmBox('Hapus game?', 'Universe ID dan API Key ini akan dihapus dari panel.'))) return; await api('/games/' + b.dataset.id, 'DELETE'); await loadGames(); viewGames(); }
+  };
+}
+
+// ---------- RESELLER: dashboard ----------
+async function viewDashboard() {
+  if (!games.length) { $('#view').innerHTML = head('Dashboard Game', 'Belum ada game.') + '<button class="btn-gold" onclick="go(\'games\')">Tambah game pertama</button>'; return; }
+  $('#view').innerHTML = head('Dashboard Game', 'Kontrol game langsung lewat Roblox Open Cloud.') + `
+  <div class="mb-6 max-w-sm"><label>Game aktif</label><select id="gsel" class="input">${games.map((g) => `<option value="${g.id}" ${g.id === current ? 'selected' : ''}>${esc(g.label)} (${esc(g.universeId)})</option>`).join('')}</select></div>
+  <div id="cards" class="text-[#8f8567]">Memuat data game…</div>`;
+  $('#gsel').onchange = (e) => { current = e.target.value; viewDashboard(); };
+  try { info = await api(`/games/${current}/info`); } catch (err) { $('#cards').innerHTML = `<div class="panel p-5 text-red-300">Gagal memuat game: ${esc(err.message)}. Periksa Universe ID dan izin API Key.</div>`; return; }
+  const pub = info.visibility === 'PUBLIC';
+  $('#cards').innerHTML = `<div class="grid lg:grid-cols-2 gap-5">
+    <div class="panel p-6 space-y-4">
+      <h3 class="brand gold-text text-2xl font-bold">Status game</h3>
+      <div><p class="text-xl font-bold">${esc(info.name)}</p><p class="text-sm text-[#b9ad8c] mt-1 whitespace-pre-line">${esc(info.description) || 'Belum ada deskripsi.'}</p></div>
+      <div class="flex items-center justify-between border-t border-[#2a2311] pt-4">
+        <div><p class="font-bold" id="visLbl">${pub ? 'Public' : 'Private'}</p><p class="text-xs text-[#8f8567]">${pub ? 'Semua pemain bisa masuk.' : 'Hanya Anda yang bisa masuk.'}</p></div>
+        <button id="visSw" class="switch ${pub ? 'on' : ''}" role="switch" aria-checked="${pub}" aria-label="Ubah status Public atau Private"></button>
+      </div>
+    </div>
+    <div class="panel p-6 flex flex-col justify-between gap-5">
+      <div><h3 class="brand gold-text text-2xl font-bold">Server</h3><p class="text-sm text-[#b9ad8c] mt-1">Restart semua server yang berjalan agar pemain masuk ke versi terbaru.</p></div>
+      <button id="restart" class="btn-gold text-lg py-5">Restart All Servers</button>
+    </div>
+    <form id="meta" class="panel p-6 space-y-4">
+      <h3 class="brand gold-text text-2xl font-bold">Nama dan deskripsi</h3>
+      <div><label>Nama game</label><input name="name" class="input" value="${esc(info.name)}" maxlength="50" required></div>
+      <div><label>Deskripsi game</label><textarea name="description" rows="4" class="input" maxlength="1000">${esc(info.description)}</textarea></div>
+      <button class="btn-gold">Save Changes</button>
+    </form>
+    <div class="panel p-6 space-y-4">
+      <h3 class="brand gold-text text-2xl font-bold">Ikon dan thumbnail</h3>
+      <label id="drop" for="file" class="block border border-dashed border-[#8a6414] rounded-xl p-8 text-center cursor-pointer hover:bg-[rgba(212,167,44,.07)]">
+        <img id="prev" class="hidden mx-auto max-h-40 rounded-lg mb-3" alt="Pratinjau">
+        <span id="dropTxt">Seret gambar ke sini atau klik untuk memilih (PNG/JPG)</span>
+        <input id="file" type="file" accept="image/png,image/jpeg" class="hidden">
+      </label>
+      <button id="upload" class="btn-line" disabled>Unggah gambar</button>
+      <p class="text-xs text-[#8f8567]">Pratinjau saja: Roblox Open Cloud belum menyediakan endpoint resmi untuk mengganti ikon game, jadi tombol ini belum terhubung ke API.</p>
+    </div></div>`;
+
+  $('#visSw').onclick = async () => {
+    const next = info.visibility === 'PUBLIC' ? 'PRIVATE' : 'PUBLIC';
+    if (!(await confirmBox('Ubah status game?', `Game akan diubah menjadi ${next === 'PUBLIC' ? 'Public' : 'Private'}.`))) return;
+    try { await api('/games/' + current, 'PATCH', { visibility: next }); toast('Status game diperbarui.'); viewDashboard(); } catch (e) { toast(e.message, 1); }
+  };
+  $('#restart').onclick = async (e) => {
+    if (!(await confirmBox('Restart semua server?', 'Apakah Anda yakin ingin merestart semua server untuk update?'))) return;
+    e.target.disabled = true;
+    try { await api(`/games/${current}/restart`, 'POST'); toast('Perintah restart terkirim.'); } catch (err) { toast(err.message, 1); }
+    e.target.disabled = false;
+  };
+  $('#meta').onsubmit = async (e) => {
+    e.preventDefault(); const f = Object.fromEntries(new FormData(e.target));
+    try { await api('/games/' + current, 'PATCH', f); toast('Perubahan disimpan.'); viewDashboard(); } catch (err) { toast(err.message, 1); }
+  };
+  const pick = (f) => { if (!f || !f.type.startsWith('image/')) return; $('#prev').src = URL.createObjectURL(f); $('#prev').classList.remove('hidden'); $('#dropTxt').textContent = f.name; $('#upload').disabled = false; };
+  $('#file').onchange = (e) => pick(e.target.files[0]);
+  $('#drop').ondragover = (e) => e.preventDefault();
+  $('#drop').ondrop = (e) => { e.preventDefault(); pick(e.dataTransfer.files[0]); };
+  $('#upload').onclick = () => toast('Unggah gambar belum tersedia di Open Cloud.', 1);
+}
+
+boot();
+</script>
+</body>
+</html>
